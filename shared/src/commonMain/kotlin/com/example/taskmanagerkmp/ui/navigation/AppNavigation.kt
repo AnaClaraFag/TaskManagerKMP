@@ -11,6 +11,8 @@ import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import com.example.taskmanagerkmp.ui.task.TaskFormScreen
 import com.example.taskmanagerkmp.ui.task.TaskListScreen
+import org.koin.compose.koinInject
+
 
 sealed class Screen(val route: String) {
     data object TaskList   : Screen("task_list")
@@ -24,7 +26,8 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavigation(viewModel: TaskViewModel) {
+fun AppNavigation() {
+    val viewModel = koinInject<TaskViewModel>()
     val navController = rememberNavController()
 
     NavHost(

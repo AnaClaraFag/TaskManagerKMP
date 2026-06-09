@@ -1,5 +1,8 @@
 package com.example.taskmanagerkmp
 
+import com.example.taskmanagerkmp.data.local.DatabaseDriverFactory
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {
@@ -7,3 +10,7 @@ class IOSPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+
+actual val platformModule: Module = module {
+    single { DatabaseDriverFactory() }
+}

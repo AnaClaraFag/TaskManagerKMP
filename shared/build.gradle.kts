@@ -60,6 +60,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.android.driver)
+            implementation(libs.koin.android)
+
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -84,6 +86,11 @@ kotlin {
 
             // Serialization (útil para exportar dados nas métricas)
             implementation(libs.kotlinx.serialization.json)
+
+            // Koin core
+            implementation(libs.koin.core)
+            // Koin para Compose Multiplatform
+            implementation(libs.koin.compose)
         }
         iosMain.dependencies {
             implementation(libs.native.driver)
