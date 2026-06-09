@@ -8,7 +8,7 @@ import kotlin.time.Clock
 
 class AddTaskUseCase(private val repository: TaskRepository) {
     suspend operator fun invoke(title: String, description: String): Long {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val now = TimeZone.currentSystemDefault().toString()
         return repository.addTask(
             Task(
                 title = title.trim(),

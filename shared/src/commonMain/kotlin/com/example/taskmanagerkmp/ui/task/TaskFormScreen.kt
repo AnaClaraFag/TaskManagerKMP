@@ -39,10 +39,12 @@ import androidx.compose.ui.unit.dp
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
+import kotlinx.datetime.LocalDateTime
+import org.koin.compose.koinInject
 
 @Composable
 fun TaskFormScreen(
-    viewModel  : TaskViewModel,
+    viewModel: TaskViewModel = koinInject<TaskViewModel>(),
     taskToEdit : Task?,
     onSave     : () -> Unit,
     onCancel   : () -> Unit
@@ -185,5 +187,15 @@ fun TaskFormScreen(
 @Preview
 @Composable
 fun TaskFormScreenPreview() {
-
+    TaskFormScreen(
+        taskToEdit =
+            Task(id = 1,
+            title = "Comprar leite",
+            description = "Lembre-se de pegar o desnatado",
+            isCompleted = false,
+                createdAt   = "2024-06-01T10:00:00Z",
+                updatedAt   = "2024-06-02T15:30:00Z"),
+        onSave     = {},
+        onCancel   = {}
+    )
 }

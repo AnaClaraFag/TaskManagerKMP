@@ -8,7 +8,7 @@ import kotlin.time.Clock
 
 class ToggleTaskUseCase(private val repository: TaskRepository) {
     suspend operator fun invoke(task: Task): Boolean {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val now = TimeZone.currentSystemDefault().toString()
         return repository.updateTask(
             task.copy(isCompleted = !task.isCompleted, updatedAt = now)
         )

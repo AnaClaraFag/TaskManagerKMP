@@ -146,8 +146,8 @@ fun TaskDetailScreenPreview() {
         title       = "Comprar mantimentos",
         description = "Leite, pão, ovos e frutas",
         isCompleted = false,
-        createdAt   = LocalDateTime.parse("2024-06-01T10:00:00Z"),
-        updatedAt   = LocalDateTime.parse("2024-06-02T15:30:00Z")
+        createdAt   = "2024-06-01T10:00:00Z",
+        updatedAt   = "2024-06-02T15:30:00Z"
     )
 
     TaskDetailScreen(

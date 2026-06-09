@@ -20,14 +20,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import com.example.taskmanagerkmp.ui.task.components.TaskItem
+import org.koin.compose.koinInject
 
 @Composable
 fun TaskListScreen(
-    viewModel: TaskViewModel,
+    viewModel: TaskViewModel = koinInject<TaskViewModel>(),
+    sampleTasks: List<Task>,
     onTaskClick: (Task) -> Unit,
     onAddClick: () -> Unit
 ) {
@@ -79,4 +82,33 @@ fun TaskListScreen(
             ) { Text(error) }
         }
     }
+}
+
+@Preview
+@Composable
+fun TaskListScreenPreview() {
+    val sampleTasks = listOf(
+        Task(
+            id = 1,
+            title = "Comprar leite",
+            description = "Lembre-se de comprar leite no supermercado",
+            isCompleted = false,
+            createdAt = "2024-06-01T10:00:00Z",
+            updatedAt = "2024-06-02T15:30:00Z"),
+        Task(
+            id = 2,
+            title = "Enviar email",
+            description = "Enviar email para o chefe sobre o projeto",
+            isCompleted = true,
+            createdAt = "2024-06-01T10:00:00Z",
+            updatedAt = "2024-06-01T10:00:00Z"
+    )
+    )
+
+    TaskListScreen(
+        sampleTasks = sampleTasks,
+        onTaskClick = {},
+        onAddClick = {}
+    )
+
 }

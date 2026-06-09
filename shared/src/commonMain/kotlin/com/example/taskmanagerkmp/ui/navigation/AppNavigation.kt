@@ -30,13 +30,14 @@ fun AppNavigation() {
     val viewModel = koinInject<TaskViewModel>()
     val navController = rememberNavController()
 
+    val uiState by viewModel.state.collectAsState()
     NavHost(
         navController = navController,
         startDestination = Screen.TaskList.route
     ) {
         composable(Screen.TaskList.route) {
             TaskListScreen(
-                viewModel   = viewModel,
+                sampleTasks = uiState.tasks,
                 onTaskClick = { task ->
                     viewModel.onEvent(TaskEvent.SelectTask(task))
                     navController.navigate(Screen.TaskEdit.createRoute(task.id))

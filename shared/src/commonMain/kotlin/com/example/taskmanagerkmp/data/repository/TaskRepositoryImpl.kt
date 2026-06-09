@@ -24,8 +24,8 @@ class TaskRepositoryImpl(driverFactory: DatabaseDriverFactory) : TaskRepository 
         title = title,
         description = description,
         isCompleted = isCompleted,
-        createdAt = LocalDateTime.parse(createdAt),
-        updatedAt = LocalDateTime.parse(updatedAt),
+        createdAt =  createdAt,
+        updatedAt =updatedAt,
     )
 
     override suspend fun getAllTasks(): List<Task> = withContext(Dispatchers.Default) {
