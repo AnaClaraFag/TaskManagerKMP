@@ -4,8 +4,8 @@ import com.example.taskmanagerkmp.data.local.DatabaseDriverFactory
 import com.example.taskmanagerkmp.data.local.createDatabase
 import com.example.taskmanagerkmp.data.model.Task
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDateTime
 
 class TaskRepositoryImpl(driverFactory: DatabaseDriverFactory) : TaskRepository {
 
@@ -42,8 +42,8 @@ class TaskRepositoryImpl(driverFactory: DatabaseDriverFactory) : TaskRepository 
                 title = task.title,
                 description = task.description,
                 isCompleted = task.isCompleted,
-                createdAt = task.createdAt.toString(),
-                updatedAt = task.updatedAt.toString(),
+                createdAt = task.createdAt,
+                updatedAt = task.updatedAt,
             )
             queries.lastInsertRowId().executeAsOne()
         }
@@ -54,7 +54,7 @@ class TaskRepositoryImpl(driverFactory: DatabaseDriverFactory) : TaskRepository 
             title = task.title,
             description = task.description,
             isCompleted = task.isCompleted,
-            updatedAt = task.updatedAt.toString(),
+            updatedAt = task.updatedAt,
             id = task.id,
         )
         true

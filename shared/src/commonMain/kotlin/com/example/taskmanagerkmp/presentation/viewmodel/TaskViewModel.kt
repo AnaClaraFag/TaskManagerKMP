@@ -10,6 +10,7 @@ import com.example.taskmanagerkmp.domain.usecase.ToggleTaskUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -69,12 +70,21 @@ class TaskViewModel(
         }
     }
 
+   private fun getTaskById(id: Long) {
+        viewModelScope.launch {
+            runCatching { getTasks() }
+                .onSuccess { tasks -> _state.update { it.copy(selectedTask = tasks.find { it.id == id }) } }
+                .onFailure { e -> _state.update { it.copy(error = e.message) } }
+        }
+    }
+
     fun onEvent(event: TaskEvent) {
         when (event) {
             is TaskEvent.CreateTask  -> add(event.title, event.description)
             is TaskEvent.UpdateTask  -> toggle(event.task) // adapte conforme seu UpdateUseCase
             is TaskEvent.DeleteTask  -> delete(event.id)
             is TaskEvent.ToggleTask  -> toggle(event.task)
+            is TaskEvent.GetTaskById -> getTaskById(event.id)
             is TaskEvent.SelectTask  -> _state.update { it.copy(selectedTask = event.task) }
             is TaskEvent.ClearError  -> _state.update { it.copy(error = null) }
         }

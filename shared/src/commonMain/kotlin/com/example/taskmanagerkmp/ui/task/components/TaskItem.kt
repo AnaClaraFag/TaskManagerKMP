@@ -14,14 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.taskmanagerkmp.data.model.Task
 
 @Composable
 fun TaskItem(
-    task: com.example.taskmanagerkmp.data.model.Task,
+    task: Task,
     onClick: () -> Unit,
     onToggle: () -> Unit,
-    onDelete: () -> Unit
+    showDeleteDialog: (Boolean) -> Unit
 ) {
+
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         headlineContent = {
@@ -43,7 +45,7 @@ fun TaskItem(
             Checkbox(checked = task.isCompleted, onCheckedChange = { onToggle() })
         },
         trailingContent = {
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = {showDeleteDialog(true)}) {
                 Icon(Icons.Default.Delete, contentDescription = "Deletar")
             }
         }

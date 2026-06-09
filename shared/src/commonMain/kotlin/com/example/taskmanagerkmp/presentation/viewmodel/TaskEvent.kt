@@ -24,6 +24,8 @@ sealed class TaskEvent {
     // Seleciona tarefa para edição — null limpa a seleção
     data class SelectTask(val task: Task?) : TaskEvent()
 
+    data class GetTaskById(val id: Long) : TaskEvent()
+
     // Limpa a mensagem de erro do UiState
     data object ClearError : TaskEvent()
 }

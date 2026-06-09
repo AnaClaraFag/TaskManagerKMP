@@ -3,11 +3,10 @@ package com.example.taskmanagerkmp.domain.usecase
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.data.repository.TaskRepository
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
 
 class AddTaskUseCase(private val repository: TaskRepository) {
     suspend operator fun invoke(title: String, description: String): Long {
+        require(title.isNotBlank()) { "Title cannot be blank" }
         val now = TimeZone.currentSystemDefault().toString()
         return repository.addTask(
             Task(

@@ -1,6 +1,7 @@
 package com.example.taskmanagerkmp.data.repository
 
 import com.example.taskmanagerkmp.data.model.Task
+import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
     suspend fun getAllTasks(): List<Task>

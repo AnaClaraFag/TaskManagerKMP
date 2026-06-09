@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.savedstate.read
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import com.example.taskmanagerkmp.ui.task.TaskFormScreen
@@ -30,14 +29,12 @@ fun AppNavigation() {
     val viewModel = koinInject<TaskViewModel>()
     val navController = rememberNavController()
 
-    val uiState by viewModel.state.collectAsState()
     NavHost(
         navController = navController,
         startDestination = Screen.TaskList.route
     ) {
         composable(Screen.TaskList.route) {
             TaskListScreen(
-                sampleTasks = uiState.tasks,
                 onTaskClick = { task ->
                     viewModel.onEvent(TaskEvent.SelectTask(task))
                     navController.navigate(Screen.TaskEdit.createRoute(task.id))
@@ -51,23 +48,28 @@ fun AppNavigation() {
 
         composable(Screen.TaskCreate.route) {
             TaskFormScreen(
-                viewModel  = viewModel,
                 taskToEdit = null,
-                onSave     = { navController.popBackStack() },
-                onCancel   = { navController.popBackStack() }
+                onSave     = {
+                    viewModel.onEvent(TaskEvent.CreateTask(it.title, it.description))
+                    navController.popBackStack() },
+                onCancel   = { navController.popBackStack() },
+                onDelete = null
             )
         }
 
         composable(Screen.TaskEdit.ROUTE) { backStackEntry ->
-            val taskId = backStackEntry.arguments?.read { getLongOrNull("taskId") }
             val uiState by viewModel.state.collectAsState()
-            val task = uiState.tasks.find { it.id == taskId }
-
+            val task = uiState.selectedTask
             TaskFormScreen(
-                viewModel  = viewModel,
                 taskToEdit = task,
-                onSave     = { navController.popBackStack() },
-                onCancel   = { navController.popBackStack() }
+                onSave     = {task ->
+                    viewModel.onEvent(TaskEvent.UpdateTask(task))
+                    navController.popBackStack() },
+                onCancel   = { navController.popBackStack() },
+                onDelete = { id ->
+                    viewModel.onEvent(TaskEvent.DeleteTask(id))
+                    navController.popBackStack()
+                }
             )
         }
     }

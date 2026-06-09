@@ -37,21 +37,17 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
-import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
-import kotlinx.datetime.LocalDateTime
-import org.koin.compose.koinInject
+import kotlin.time.Clock
 
 @Composable
 fun TaskFormScreen(
-    viewModel: TaskViewModel = koinInject<TaskViewModel>(),
     taskToEdit : Task?,
-    onSave     : () -> Unit,
+    onSave     : (Task) -> Unit,
+    onDelete: ((Long) -> Unit)?,
     onCancel   : () -> Unit
 ) {
     val isEditing = taskToEdit != null
-
-    var title       by remember { mutableStateOf(taskToEdit?.title       ?: "") }
+    var title       by remember { mutableStateOf(taskToEdit?.title  ?: "") }
     var description by remember { mutableStateOf(taskToEdit?.description ?: "") }
     var isCompleted by remember { mutableStateOf(taskToEdit?.isCompleted ?: false) }
 
@@ -72,25 +68,27 @@ fun TaskFormScreen(
                             titleError = true
                             return@TextButton
                         }
-                        if (isEditing && taskToEdit != null) {
-                            viewModel.onEvent(
-                                TaskEvent.UpdateTask(
-                                    taskToEdit.copy(
-                                        title       = title.trim(),
-                                        description = description.trim(),
-                                        isCompleted = isCompleted
-                                    )
-                                )
+                        if (isEditing) {
+                            val task = Task(
+                                id          = taskToEdit.id,
+                                title       = title.trim(),
+                                description = description.trim(),
+                                isCompleted = isCompleted,
+                                createdAt   = taskToEdit.createdAt,
+                                updatedAt   = Clock.System.now().toString()
                             )
+                            onSave(task)
+
                         } else {
-                            viewModel.onEvent(
-                                TaskEvent.CreateTask(
-                                    title       = title.trim(),
-                                    description = description.trim()
-                                )
+                            val taskCreated = Task(
+                               title = title.trim(),
+                                 description = description.trim(),
+                                isCompleted = false,
+                                createdAt   = Clock.System.now().toString(),
+                                updatedAt   = Clock.System.now().toString()
                             )
+                            onSave(taskCreated)
                         }
-                        onSave()
                     }) {
                         Text("Salvar")
                     }
@@ -162,12 +160,11 @@ fun TaskFormScreen(
             }
 
             // Botão deletar (só na edição)
-            if (isEditing && taskToEdit != null) {
+            if (isEditing) {
                 Spacer(Modifier.weight(1f))
                 OutlinedButton(
                     onClick  = {
-                        viewModel.onEvent(TaskEvent.DeleteTask(taskToEdit.id))
-                        onSave()
+                        if(onDelete != null) onDelete(taskToEdit.id)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors   = ButtonDefaults.outlinedButtonColors(
@@ -195,6 +192,7 @@ fun TaskFormScreenPreview() {
             isCompleted = false,
                 createdAt   = "2024-06-01T10:00:00Z",
                 updatedAt   = "2024-06-02T15:30:00Z"),
+        onDelete = {},
         onSave     = {},
         onCancel   = {}
     )
