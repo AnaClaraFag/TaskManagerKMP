@@ -37,19 +37,21 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.taskmanagerkmp.data.model.Task
+import com.example.taskmanagerkmp.ui.task.components.DeleteConfirmationDialog
 import kotlin.time.Clock
 
 @Composable
 fun TaskFormScreen(
-    taskToEdit : Task?,
-    onSave     : (Task) -> Unit,
+    taskToEdit: Task?,
+    onSave: (Task) -> Unit,
     onDelete: ((Long) -> Unit)?,
-    onCancel   : () -> Unit
+    onCancel: () -> Unit,
 ) {
     val isEditing = taskToEdit != null
-    var title       by remember { mutableStateOf(taskToEdit?.title  ?: "") }
+    var title by remember { mutableStateOf(taskToEdit?.title ?: "") }
     var description by remember { mutableStateOf(taskToEdit?.description ?: "") }
     var isCompleted by remember { mutableStateOf(taskToEdit?.isCompleted ?: false) }
+    var showDeleteConfirmation by remember { mutableStateOf(false)}
 
     var titleError by remember { mutableStateOf(false) }
 
@@ -90,7 +92,7 @@ fun TaskFormScreen(
                             onSave(taskCreated)
                         }
                     }) {
-                        Text("Salvar")
+                        Text(if (isEditing) "Editar" else "Salvar")
                     }
                 }
             )
@@ -106,22 +108,22 @@ fun TaskFormScreen(
 
             // Campo título
             OutlinedTextField(
-                value         = title,
+                value = title,
                 onValueChange = {
-                    title      = it
+                    title = it
                     titleError = false
                 },
-                label         = { Text("Título *") },
-                placeholder   = { Text("Ex: Comprar leite") },
-                isError       = titleError,
+                label = { Text("Título *") },
+                placeholder = { Text("Ex: Comprar leite") },
+                isError = titleError,
                 supportingText = {
                     if (titleError) Text(
                         "O título é obrigatório",
                         color = MaterialTheme.colorScheme.error
                     )
                 },
-                singleLine    = true,
-                modifier      = Modifier.fillMaxWidth(),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Next
@@ -130,29 +132,29 @@ fun TaskFormScreen(
 
             // Campo descrição
             OutlinedTextField(
-                value         = description,
+                value = description,
                 onValueChange = { description = it },
-                label         = { Text("Descrição") },
-                placeholder   = { Text("Detalhes opcionais...") },
-                minLines      = 3,
-                maxLines      = 6,
-                modifier      = Modifier.fillMaxWidth(),
+                label = { Text("Descrição") },
+                placeholder = { Text("Detalhes opcionais...") },
+                minLines = 3,
+                maxLines = 6,
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
-                    imeAction      = ImeAction.Done
+                    imeAction = ImeAction.Done
                 )
             )
 
             // Toggle concluída (só aparece na edição)
             if (isEditing) {
                 Row(
-                    modifier          = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("Tarefa concluída", style = MaterialTheme.typography.bodyLarge)
                     Switch(
-                        checked         = isCompleted,
+                        checked = isCompleted,
                         onCheckedChange = { isCompleted = it }
                     )
                 }
@@ -163,18 +165,25 @@ fun TaskFormScreen(
             if (isEditing) {
                 Spacer(Modifier.weight(1f))
                 OutlinedButton(
-                    onClick  = {
-                        if(onDelete != null) onDelete(taskToEdit.id)
+                    onClick = {
+                        showDeleteConfirmation = true
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors   = ButtonDefaults.outlinedButtonColors(
+                    colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
                     ),
-                    border   = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text("Deletar tarefa")
+                }
+
+                if(showDeleteConfirmation){
+                    DeleteConfirmationDialog(
+                        onConfirm = { onDelete?.invoke(taskToEdit.id) },
+                        onDismiss = {showDeleteConfirmation = false}
+                    )
                 }
             }
         }
@@ -186,14 +195,16 @@ fun TaskFormScreen(
 fun TaskFormScreenPreview() {
     TaskFormScreen(
         taskToEdit =
-            Task(id = 1,
-            title = "Comprar leite",
-            description = "Lembre-se de pegar o desnatado",
-            isCompleted = false,
-                createdAt   = "2024-06-01T10:00:00Z",
-                updatedAt   = "2024-06-02T15:30:00Z"),
+            Task(
+                id = 1,
+                title = "Comprar leite",
+                description = "Lembre-se de pegar o desnatado",
+                isCompleted = false,
+                createdAt = "2024-06-01T10:00:00Z",
+                updatedAt = "2024-06-02T15:30:00Z"
+            ),
         onDelete = {},
-        onSave     = {},
-        onCancel   = {}
+        onSave = {},
+        onCancel = {}
     )
 }
