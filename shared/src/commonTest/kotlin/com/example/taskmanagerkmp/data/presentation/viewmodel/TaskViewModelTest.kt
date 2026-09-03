@@ -1,7 +1,7 @@
 package com.example.taskmanagerkmp.data.presentation.viewmodel
 
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.data.repositoryTest.TaskRepositoryFake
+import com.example.taskmanagerkmp.data.repositoryTest.ITaskRepositoryFake
 import com.example.taskmanagerkmp.domain.usecase.*
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
@@ -16,7 +16,7 @@ import kotlin.test.*
 class TaskViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val repository = TaskRepositoryFake()
+    private val repository = ITaskRepositoryFake()
     private val now = TimeZone.currentSystemDefault().toString()
 
     private fun buildViewModel() = TaskViewModel(

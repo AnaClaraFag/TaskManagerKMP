@@ -1,6 +1,6 @@
 package com.example.taskmanagerkmp.data.domain.usecases
 
-import com.example.taskmanagerkmp.data.repositoryTest.TaskRepositoryFake
+import com.example.taskmanagerkmp.data.repositoryTest.ITaskRepositoryFake
 import com.example.taskmanagerkmp.domain.usecase.AddTaskUseCase
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -9,7 +9,7 @@ import kotlin.test.assertFailsWith
 
 class AddTaskUseCaseTest {
 
-    private val repository = TaskRepositoryFake()
+    private val repository = ITaskRepositoryFake()
     private val useCase = AddTaskUseCase(repository)
 
     @Test

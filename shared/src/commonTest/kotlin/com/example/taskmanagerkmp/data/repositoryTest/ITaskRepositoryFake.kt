@@ -1,12 +1,11 @@
 package com.example.taskmanagerkmp.data.repositoryTest
 
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.data.repository.TaskRepository
-import kotlinx.coroutines.flow.Flow
+import com.example.taskmanagerkmp.data.repository.ITaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.TimeZone
 
-class TaskRepositoryFake : TaskRepository {
+class ITaskRepositoryFake : ITaskRepository {
 
     private val tasks = MutableStateFlow<List<Task>>(emptyList())
     private var nextId = 1L

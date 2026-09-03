@@ -1,19 +1,17 @@
 package com.example.taskmanagerkmp.data.domain.usecases
 
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.data.repositoryTest.TaskRepositoryFake
+import com.example.taskmanagerkmp.data.repositoryTest.ITaskRepositoryFake
 import com.example.taskmanagerkmp.domain.usecase.ToggleTaskUseCase
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ToggleTaskUseCaseTest {
 
-    private val repository = TaskRepositoryFake()
+    private val repository = ITaskRepositoryFake()
     private val useCase =  ToggleTaskUseCase(repository)
     private val now = TimeZone.currentSystemDefault().toString()
 

@@ -1,12 +1,10 @@
 package com.example.taskmanagerkmp.domain.usecase
 
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.data.repository.TaskRepository
+import com.example.taskmanagerkmp.data.repository.ITaskRepository
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
 
-class ToggleTaskUseCase(private val repository: TaskRepository) {
+class ToggleTaskUseCase(private val repository: ITaskRepository) {
     suspend operator fun invoke(task: Task): Boolean {
         val now = TimeZone.currentSystemDefault().toString()
         return repository.updateTask(

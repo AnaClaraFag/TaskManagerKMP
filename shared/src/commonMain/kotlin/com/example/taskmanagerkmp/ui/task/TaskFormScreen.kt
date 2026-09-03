@@ -92,7 +92,7 @@ fun TaskFormScreen(
                             onSave(taskCreated)
                         }
                     }) {
-                        Text(if (isEditing) "Editar" else "Salvar")
+                        Text("Salvar")
                     }
                 }
             )

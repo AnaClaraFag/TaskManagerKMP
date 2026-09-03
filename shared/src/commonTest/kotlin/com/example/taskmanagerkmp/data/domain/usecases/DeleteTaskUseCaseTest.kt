@@ -2,7 +2,7 @@ package com.example.taskmanagerkmp.data.domain.usecases
 
 
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.data.repositoryTest.TaskRepositoryFake
+import com.example.taskmanagerkmp.data.repositoryTest.ITaskRepositoryFake
 import com.example.taskmanagerkmp.domain.usecase.DeleteTaskUseCase
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.TimeZone
@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 
 class DeleteTaskUseCaseTest {
 
-    private val repository = TaskRepositoryFake()
+    private val repository = ITaskRepositoryFake()
     private val useCase = DeleteTaskUseCase(repository)
     private val now = TimeZone.currentSystemDefault().toString()
 

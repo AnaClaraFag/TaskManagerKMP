@@ -1,7 +1,7 @@
 package com.example.taskmanagerkmp.di
 
+import com.example.taskmanagerkmp.data.repository.ITaskRepository
 import com.example.taskmanagerkmp.data.repository.TaskRepository
-import com.example.taskmanagerkmp.data.repository.TaskRepositoryImpl
 import com.example.taskmanagerkmp.domain.usecase.AddTaskUseCase
 import com.example.taskmanagerkmp.domain.usecase.DeleteTaskUseCase
 import com.example.taskmanagerkmp.domain.usecase.GetTasksUseCase
@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val appModule = module{
 
-    single < TaskRepository> { TaskRepositoryImpl(get()) }
+    single < ITaskRepository> { TaskRepository(get()) }
 
     // Use Cases
     factory { GetTasksUseCase(get()) }

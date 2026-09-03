@@ -7,6 +7,16 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlixKover)
+}
+
+detekt {
+    toolVersion = "1.23.7"
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+    baseline = file("$projectDir/detekt-baseline.xml")
+    allRules = false
 }
 
 sqldelight {
@@ -17,9 +27,28 @@ sqldelight {
     }
 }
 
+tasks.register("detektAll") {
+    group = "verification"
+    description = "Roda Detekt em todos os source sets KMP"
+    dependsOn(
+        "detektMetadataCommonMain",
+        "detektAndroidMain",
+        "detektMetadataIosMain"
+    )
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        sarif.required.set(false)
+        md.required.set(false)
+    }
+}
+
 kotlin {
 
-    cocoapods{
+    cocoapods {
         version = "1.0"
         summary = "TaskManager KMP Shared Module"
         homepage = "https://github.com/AnaClaraFag/taskmanager"
@@ -40,21 +69,21 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     androidLibrary {
-       namespace = "com.example.taskmanagerkmp.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+        namespace = "com.example.taskmanagerkmp.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
     sourceSets {
         androidMain.dependencies {
@@ -106,4 +135,5 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+    detektPlugins(libs.detekt.formatting)
 }

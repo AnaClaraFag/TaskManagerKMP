@@ -2,6 +2,7 @@ package com.example.taskmanagerkmp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.taskmanagerkmp.domain.usecase.GetTaskByIdUseCase
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.domain.usecase.AddTaskUseCase
 import com.example.taskmanagerkmp.domain.usecase.DeleteTaskUseCase
@@ -10,7 +11,6 @@ import com.example.taskmanagerkmp.domain.usecase.ToggleTaskUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,6 +19,8 @@ class TaskViewModel(
     private val addTask: AddTaskUseCase,
     private val toggleTask: ToggleTaskUseCase,
     private val deleteTask: DeleteTaskUseCase,
+    private val getTaskById: GetTaskByIdUseCase,
+    private val updateTask: UpdateTaskUseCase
 ) : ViewModel() {
 
     data class UiState(
