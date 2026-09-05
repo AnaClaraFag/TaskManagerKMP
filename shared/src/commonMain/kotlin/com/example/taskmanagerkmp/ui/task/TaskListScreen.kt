@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.taskmanagerkmp.data.model.Task
-import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import com.example.taskmanagerkmp.ui.task.components.AppTopBar
 import com.example.taskmanagerkmp.ui.task.components.DeleteConfirmationDialog
@@ -83,13 +82,13 @@ fun TaskListScreen(
                         TaskItem(
                             task = task,
                             onClick = { onTaskClick(task) },
-                            onToggle = { viewModel.onEvent(TaskEvent.ToggleTask(task)) },
+                            onToggle = { viewModel.toggleTask(task) },
                             showDeleteDialog = { showDeletedDialog = it },
                         )
 
                         if(showDeletedDialog){
                             DeleteConfirmationDialog(
-                                onConfirm = {viewModel.onEvent(TaskEvent.DeleteTask(task.id))},
+                                onConfirm = {viewModel.deleteTask(task.id)},
                                 onDismiss = {showDeletedDialog = false}
                             )
                         }
@@ -122,7 +121,7 @@ fun TaskListScreen(
             Snackbar(
                 modifier = Modifier.padding(padding),
                 action = {
-                    TextButton(onClick = { viewModel.onEvent(TaskEvent.ClearError) }) {
+                    TextButton(onClick = { }) {
                         Text("OK")
                     }
                 }

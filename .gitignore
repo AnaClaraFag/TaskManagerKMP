@@ -17,3 +17,8 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+/scripts/analyze.sh
+/.sonarlint/connectedMode.json
+/config/detekt/detekt.yml
+/shared/detekt-baseline.xml
+/MVVM_MIGRATION_PLAN.md

@@ -2,12 +2,13 @@ package com.example.taskmanagerkmp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.taskmanagerkmp.domain.usecase.GetTaskByIdUseCase
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.domain.usecase.AddTaskUseCase
 import com.example.taskmanagerkmp.domain.usecase.DeleteTaskUseCase
+import com.example.taskmanagerkmp.domain.usecase.GetTaskByIdUseCase
 import com.example.taskmanagerkmp.domain.usecase.GetTasksUseCase
 import com.example.taskmanagerkmp.domain.usecase.ToggleTaskUseCase
+import com.example.taskmanagerkmp.domain.usecase.UpdateTaskUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,12 +16,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TaskViewModel(
-    private val getTasks: GetTasksUseCase,
-    private val addTask: AddTaskUseCase,
-    private val toggleTask: ToggleTaskUseCase,
-    private val deleteTask: DeleteTaskUseCase,
-    private val getTaskById: GetTaskByIdUseCase,
-    private val updateTask: UpdateTaskUseCase
+    private val getTasksUseCase: GetTasksUseCase,
+    private val addTaskUseCase: AddTaskUseCase,
+    private val toggleTaskUseCase: ToggleTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val getTaskByIdUseCase: GetTaskByIdUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase
 ) : ViewModel() {
 
     data class UiState(
@@ -41,54 +42,57 @@ class TaskViewModel(
     fun refresh() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            runCatching { getTasks() }
-                .onSuccess { tasks -> _state.update { it.copy(tasks = tasks, isLoading = false) } }
+            runCatching { getTasksUseCase.invoke() }
+                .onSuccess { tasks ->
+                    _state.update {
+                        it.copy(
+                            tasks = tasks,
+                            isLoading = false
+                        )
+                    }
+                }
                 .onFailure { e -> _state.update { it.copy(isLoading = false, error = e.message) } }
         }
     }
 
-    fun add(title: String, description: String) {
+    fun createTask(title: String, description: String) {
         if (title.isBlank()) return
         viewModelScope.launch {
-            runCatching { addTask(title, description) }
+            runCatching { addTaskUseCase(title, description) }
                 .onSuccess { refresh() }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }
         }
     }
 
-    fun toggle(task: Task) {
+    fun toggleTask(task: Task) {
         viewModelScope.launch {
-            runCatching { toggleTask(task) }
+            runCatching { toggleTaskUseCase(task) }
                 .onSuccess { refresh() }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }
         }
     }
 
-    fun delete(id: Long) {
+    fun deleteTask(id: Long) {
         viewModelScope.launch {
-            runCatching { deleteTask(id) }
+            runCatching { deleteTaskUseCase(id) }
                 .onSuccess { refresh() }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }
         }
     }
 
-   private fun getTaskById(id: Long) {
+    fun getTaskById(id: Long) {
         viewModelScope.launch {
-            runCatching { getTasks() }
-                .onSuccess { tasks -> _state.update { it.copy(selectedTask = tasks.find { it.id == id }) } }
+            runCatching { getTaskByIdUseCase(id) }
+                .onSuccess { task -> _state.update { it.copy(selectedTask = task) } }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }
         }
     }
 
-    fun onEvent(event: TaskEvent) {
-        when (event) {
-            is TaskEvent.CreateTask  -> add(event.title, event.description)
-            is TaskEvent.UpdateTask  -> toggle(event.task) // adapte conforme seu UpdateUseCase
-            is TaskEvent.DeleteTask  -> delete(event.id)
-            is TaskEvent.ToggleTask  -> toggle(event.task)
-            is TaskEvent.GetTaskById -> getTaskById(event.id)
-            is TaskEvent.SelectTask  -> _state.update { it.copy(selectedTask = event.task) }
-            is TaskEvent.ClearError  -> _state.update { it.copy(error = null) }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            runCatching { updateTaskUseCase(task) }
+                .onSuccess { _state.update { it.copy() } }
         }
     }
 }

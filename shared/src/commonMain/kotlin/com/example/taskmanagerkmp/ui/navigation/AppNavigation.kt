@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import com.example.taskmanagerkmp.ui.task.TaskDetailScreen
 import com.example.taskmanagerkmp.ui.task.TaskFormScreen
@@ -50,11 +49,10 @@ fun AppNavigation() {
             TaskListScreen(
                 viewModel = viewModel,
                 onTaskClick = { task ->
-                    viewModel.onEvent(TaskEvent.SelectTask(task))
+                    viewModel.getTaskById(task.id)
                     navController.navigate(Screen.TaskDetail.createRoute(task.id))
                 },
                 onAddClick = {
-                    viewModel.onEvent(TaskEvent.SelectTask(null))
                     navController.navigate(Screen.TaskCreate.route)
                 }
             )
@@ -64,7 +62,7 @@ fun AppNavigation() {
             TaskFormScreen(
                 taskToEdit = null,
                 onSave = {
-                    viewModel.onEvent(TaskEvent.CreateTask(it.title, it.description))
+                    viewModel.createTask(it.title, it.description)
                     navController.popBackStack()
                 },
                 onCancel = { navController.popBackStack() },
@@ -88,7 +86,7 @@ fun AppNavigation() {
                 if (showDeleteDialog) {
                     DeleteConfirmationDialog(
                         onConfirm = {
-                            viewModel.onEvent(TaskEvent.DeleteTask(task.id))
+                            viewModel.deleteTask(task.id)
                             showDeleteDialog = false
                             navController.popBackStack()
                         },
@@ -104,12 +102,12 @@ fun AppNavigation() {
             TaskFormScreen(
                 taskToEdit = task,
                 onSave = { updated ->
-                    viewModel.onEvent(TaskEvent.UpdateTask(updated))
+                    viewModel.updateTask(updated)
                     navController.popBackStack()
                 },
                 onCancel = { navController.popBackStack() },
                 onDelete = { id ->
-                    viewModel.onEvent(TaskEvent.DeleteTask(id))
+                    viewModel.deleteTask(id)
                     // pop edit + detail back to the list
                     navController.popBackStack(Screen.TaskList.route, inclusive = false)
                 }

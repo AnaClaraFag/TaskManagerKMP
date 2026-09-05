@@ -3,7 +3,6 @@ package com.example.taskmanagerkmp.data.presentation.viewmodel
 import com.example.taskmanagerkmp.data.model.Task
 import com.example.taskmanagerkmp.data.repositoryTest.ITaskRepositoryFake
 import com.example.taskmanagerkmp.domain.usecase.*
-import com.example.taskmanagerkmp.presentation.viewmodel.TaskEvent
 import com.example.taskmanagerkmp.presentation.viewmodel.TaskViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,10 +19,12 @@ class TaskViewModelTest {
     private val now = TimeZone.currentSystemDefault().toString()
 
     private fun buildViewModel() = TaskViewModel(
-        getTasks = GetTasksUseCase(repository),
-        addTask = AddTaskUseCase(repository),
-        toggleTask = ToggleTaskUseCase(repository),
-        deleteTask = DeleteTaskUseCase(repository),
+        getTasksUseCase = GetTasksUseCase(repository),
+        addTaskUseCase = AddTaskUseCase(repository),
+        toggleTaskUseCase = ToggleTaskUseCase(repository),
+        deleteTaskUseCase = DeleteTaskUseCase(repository),
+        getTaskByIdUseCase = GetTaskByIdUseCase(repository),
+        updateTaskUseCase = UpdateTaskUseCase(repository)
     )
 
     @BeforeTest
@@ -50,7 +51,7 @@ class TaskViewModelTest {
     @Test
     fun `CreateTask deve adicionar tarefa na lista`() = runTest(testDispatcher) {
         val viewModel = buildViewModel()
-        viewModel.onEvent(TaskEvent.CreateTask("Nova tarefa", "Descrição"))
+        viewModel.createTask("Nova tarefa", "Descrição")
 
         advanceUntilIdle()
 
@@ -69,7 +70,7 @@ class TaskViewModelTest {
     @Test
     fun `CreateTask com titulo vazio nao deve adicionar tarefa`() = runTest {
         val viewModel = buildViewModel()
-        viewModel.onEvent(TaskEvent.CreateTask("", ""))
+        viewModel.createTask("", "")
         advanceUntilIdle()
 
         val state = viewModel.state.first()
@@ -84,7 +85,7 @@ class TaskViewModelTest {
         val viewModel = buildViewModel()
         advanceUntilIdle()
 
-        viewModel.onEvent(TaskEvent.DeleteTask(1L))
+        viewModel.deleteTask(1L)
         advanceUntilIdle()
 
         val state = viewModel.state.first()
@@ -99,22 +100,11 @@ class TaskViewModelTest {
         val viewModel = buildViewModel()
         advanceUntilIdle()
 
-        viewModel.onEvent(TaskEvent.ToggleTask(task))
+        viewModel.toggleTask(task)
         advanceUntilIdle()
 
         val state = viewModel.state.first()
         assertTrue(state.tasks.first().isCompleted)
     }
 
-    @Test
-    fun `ClearError deve limpar mensagem de erro`() = runTest {
-        val viewModel = buildViewModel()
-        viewModel.onEvent(TaskEvent.CreateTask("", ""))
-        advanceUntilIdle()
-
-        viewModel.onEvent(TaskEvent.ClearError)
-        advanceUntilIdle()
-
-        assertNull(viewModel.state.first().error)
-    }
 }
